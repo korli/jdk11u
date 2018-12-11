@@ -47,6 +47,7 @@ ifeq ($(call isTargetOs, aix), false)
       -DUSE_PORTS=TRUE \
       -DUSE_DAUDIO=TRUE \
       #
+  LIBJSOUND_LANG := C
 
   ifeq ($(call isTargetOs, solaris), false)
     LIBJSOUND_CFLAGS += \
@@ -59,9 +60,14 @@ ifeq ($(call isTargetOs, aix), false)
     LIBJSOUND_TOOLCHAIN := TOOLCHAIN_LINK_CXX
   endif
 
+  ifeq ($(call isTargetOs, haiku), true)
+    LIBJSOUND_LANG := C++
+  endif
+
   $(eval $(call SetupJdkLibrary, BUILD_LIBJSOUND, \
       NAME := jsound, \
       TOOLCHAIN := $(LIBJSOUND_TOOLCHAIN), \
+      LANG := $(LIBJSOUND_LANG), \
       OPTIMIZATION := LOW, \
       CFLAGS := $(CFLAGS_JDKLIB) \
           $(LIBJSOUND_CFLAGS), \
@@ -73,6 +79,7 @@ ifeq ($(call isTargetOs, aix), false)
       LIBS_macosx := -framework CoreAudio -framework CoreFoundation \
           -framework CoreServices -framework AudioUnit \
           -framework CoreMIDI -framework AudioToolbox $(LIBCXX), \
+      LIBS_haiku := -lmedia -lmidi2 -lbe -lstdc++, \
       LIBS_windows := $(WIN_JAVA_LIB) advapi32.lib dsound.lib winmm.lib user32.lib ole32.lib, \
   ))
 
@@ -141,3 +148,22 @@ ifeq ($(call isTargetOs, macosx), true)
   $(BUILD_LIBOSX): $(call FindLib, java.base, java)
 
 endif
+
+
+################################################################################
+
+ifeq ($(call isTargetOs, haiku), true)
+
+  $(eval $(call SetupJdkLibrary,BUILD_LIBHAIKUAPP, \
+      NAME := haikuapp, \
+      LANG := C++, \
+      OPTIMIZATION := LOW, \
+      CFLAGS := -w $(CFLAGS_JDKLIB), \
+      LDFLAGS := $(LDFLAGS_JDKLIB) \
+          $(call SET_SHARED_LIBRARY_ORIGIN), \
+      LIBS := -lbe -lstdc++, \
+  ))
+
+  TARGETS += $(BUILD_LIBHAIKUAPP)
+endif
+

@@ -84,7 +84,7 @@ CFLAGS_VM_VERSION := \
 ################################################################################
 # Disabled warnings
 
-DISABLED_WARNINGS_gcc := extra all
+DISABLED_WARNINGS_gcc := extra all stringop-overflow
 ifeq ($(call check-jvm-feature, zero), true)
   DISABLED_WARNINGS_gcc += return-type
 endif

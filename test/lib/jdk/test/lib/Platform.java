@@ -136,6 +136,10 @@ public class Platform {
         return isOs("sunos");
     }
 
+    public static boolean isHaiku() {
+        return isOs("haiku");
+    }
+
     public static boolean isWindows() {
         return isOs("win");
     }
@@ -377,6 +381,8 @@ public class Platform {
             return "DYLD_LIBRARY_PATH";
         } else if (isAix()) {
             return "LIBPATH";
+        } else if (isHaiku()) {
+            return "LIBRARY_PATH";
         } else {
             return "LD_LIBRARY_PATH";
         }
